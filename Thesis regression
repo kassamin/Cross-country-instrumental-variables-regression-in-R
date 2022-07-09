@@ -1,0 +1,1404 @@
+library(readxl)
+library(knitr)
+library(ggplot2)
+library(dplyr)
+library(tidyverse)
+library(plm)
+library(stargazer)
+library(AER)
+
+
+#######load data from country-level data in excel#########
+
+data1 <- read_xlsx("./Data_found/morocco_1.xlsx")
+data2 <- read_xlsx("./Data_found/algeria_1.xlsx")
+data3 <- read_xlsx("./Data_found/tunisia_1.xlsx")
+data4 <- read_xlsx("./Data_found/egypt_1.xlsx")
+data5 <- read_xlsx("./Data_found/lebanon_1.xlsx")
+data6 <- read_xlsx("./Data_found/jordan_1.xlsx")
+data7 <- read_xlsx("./Data_found/turkey_1.xlsx")
+data8 <- read_xlsx("./Data_found/albania_1.xlsx")
+data9 <- read_xlsx("./Data_found/bosnia_1.xlsx")
+data10 <- read_xlsx("./Data_found/croatia_1.xlsx")
+data11 <- read_xlsx("./Data_found/montenegro_1.xlsx")
+data12 <- read_xlsx("./Data_found/belarus_1.xlsx")
+data13 <- read_xlsx("./Data_found/armenia_1.xlsx")
+data14 <- read_xlsx("./Data_found/macedonia_1.xlsx")
+data15 <- read_xlsx("./Data_found/serbia_1.xlsx")
+data16 <- read_xlsx("./Data_found/ukraine_1.xlsx")
+data17 <- read_xlsx("./Data_found/georgia_1.xlsx")
+data18 <- read_xlsx("./Data_found/iraq_1.xlsx")
+data19 <- read_xlsx("./Data_found/azerbaijan_1.xlsx")
+
+
+#########computation of lagged values and growth rates###########
+
+########Morocco##################
+
+avg_rainma <- data.frame(data1$avg_rain)
+rainma.ts <- ts(avg_rainma, start = 2008, frequency = 1)
+avg_rainmal1 <- lag(rainma.ts, -1)
+rain_morocco1 <- data.frame(avg_rainmal1)
+rain_morocco1$year <- c(2009:2019)
+colnames(rain_morocco1) <- c("avg_rain_t-1", "year")
+
+sd_rainma <- data.frame(data1$sd_rain)
+sd_rainma.ts <- ts(sd_rainma, start = 2008, frequency = 1)
+sd_rainmal1 <- lag(sd_rainma.ts, -1)
+sd_rain1 <- data.frame(sd_rainmal1)
+sd_rain1$year <- c(2009:2019)
+colnames(sd_rain1) <- c("sd_rain_t-1", "year")
+
+rain_1 <- merge(rain_morocco1, sd_rain1, by = "year")
+
+total_populationma <- data.frame(data1$total_population)
+total_populationma.ts <- ts(total_populationma, start = 2008, frequency = 1)
+total_totalpopulationmal1 <- lag(total_populationma.ts, -1)
+total_population1 <- data.frame(total_totalpopulationmal1)
+total_population1$year <- c(2009:2019)
+colnames(total_population1) <- c("total_population_t-1", "year")
+
+lagged_1 <- merge(rain_1, total_population1, by = "year")
+
+data1l <- merge(data1, lagged_1, by = "year")
+
+employment_ma <- panell1$rural_employment[panell1$country == "Morocco"]
+employment_ma.ts <- ts(employment_ma, start = 2009, frequency = 1)
+employmentgrowth_ma <- ((employment_ma.ts - lag(employment_ma.ts))/employment_ma.ts)
+employmentgrowth1 <- data.frame(employmentgrowth_ma)
+employmentgrowth1$year <- c(2009:2017)
+colnames(employmentgrowth1) <- c("rural_employment_growth", "year")
+
+data1lg <- merge(data1l, employmentgrowth1, by = "year")
+
+##########Algeria###############
+
+rain_algeria <- data.frame(data2$avg_rain)
+rainalg.ts <- ts (rain_algeria, start = 2008, frequency = 1)
+rainalgl1 <- lag(rainalg.ts, -1)
+rain_algerial1 <- data.frame(rainalgl1)
+rain_algerial1$year <- c(2009:2019)
+colnames(rain_algerial1) <- c("avg_rain_t-1", "year")
+
+sd_rainalg <- data.frame(data2$sd_rain)
+sd_rainalg.ts <- ts(sd_rainalg, start = 2008, frequency = 1)
+sd_rainalgl1 <- lag(sd_rainalg.ts, -1)
+sd_rain2 <- data.frame(sd_rainalgl1)
+sd_rain2$year <- c(2009:2019)
+colnames(sd_rain2) <- c("sd_rain_t-1", "year")
+
+rain_2 <- merge(rain_algerial1, sd_rain2, by = "year")
+
+total_populationalg <- data.frame(data2$total_population)
+total_populationalg.ts <- ts(total_populationalg, start = 2008, frequency = 1)
+total_totalpopulationalgl1 <- lag(total_populationalg.ts, -1)
+total_population2 <- data.frame(total_totalpopulationalgl1)
+total_population2$year <- c(2009:2019)
+colnames(total_population2) <- c("total_population_t-1", "year")
+
+lagged_2 <- merge(rain_2, total_population2, by = "year")
+
+data2l <- merge(data2, lagged_2, by = "year")
+
+employment_alg <- panell1$rural_employment[panell1$country == "Algeria"]
+employment_alg.ts <- ts(employment_alg, start = 2009, frequency = 1)
+employmentgrowth_alg <- ((employment_alg.ts - lag(employment_alg.ts))/employment_alg.ts)
+employmentgrowth2 <- data.frame(employmentgrowth_alg)
+employmentgrowth2$year <- c(2009:2017)
+colnames(employmentgrowth2) <- c("rural_employment_growth", "year")
+
+data2lg <- merge(data2l, employmentgrowth2, by = "year")
+
+#########Tunisia##################
+
+rain_tunisia <- data.frame(data3$avg_rain)
+raintun.ts <- ts(rain_tunisia, start = 2008, frequency = 1)
+raintunl1 <- lag(raintun.ts, -1)
+rain_tunisia1 <- data.frame(raintunl1)
+rain_tunisia1$year <- (2009:2019)
+colnames(rain_tunisia1) <- c("avg_rain_t-1", "year")
+
+sd_raintun <- data.frame(data3$sd_rain)
+sd_raintun.ts <- ts(sd_raintun, start = 2008, frequency = 1)
+sd_raintunl1 <- lag(sd_raintun.ts, -1)
+sd_rain3 <- data.frame(sd_raintunl1)
+sd_rain3$year <- c(2009:2019)
+colnames(sd_rain3) <- c("sd_rain_t-1", "year")
+
+rain_3 <- merge(rain_tunisia1, sd_rain3, by = "year")
+
+total_populationtun <- data.frame(data3$total_population)
+total_populationtun.ts <- ts(total_populationtun, start = 2008, frequency = 1)
+total_totalpopulationtunl1 <- lag(total_populationtun.ts, -1)
+total_population3 <- data.frame(total_totalpopulationtunl1)
+total_population3$year <- c(2009:2019)
+colnames(total_population3) <- c("total_population_t-1", "year")
+
+lagged_3 <- merge(rain_3, total_population3, by = "year")
+
+data3l <- merge(data3, lagged_3, by = "year")
+
+employment_tun <- panell1$rural_employment[panell1$country == "Tunisia"]
+employment_tun.ts <- ts(employment_tun, start = 2009, frequency = 1)
+employmentgrowth_tun <- ((employment_tun.ts - lag(employment_tun.ts))/employment_tun.ts)
+employmentgrowth3 <- data.frame(employmentgrowth_tun)
+employmentgrowth3$year <- c(2009:2017)
+colnames(employmentgrowth3) <- c("rural_employment_growth", "year")
+
+data3lg <- merge(data3l, employmentgrowth3, by = "year")
+
+##############Egypt##############
+
+rain_egypt <- data.frame(data4$avg_rain)
+rainegy.ts <- ts(rain_egypt, start = 2008, frequency = 1)
+rainegyl1 <- lag(rainegy.ts, -1)
+rain_egypt1 <- data.frame(rainegyl1)
+rain_egypt1$year <- c(2009:2019)
+colnames(rain_egypt1) <- c("avg_rain_t-1", "year")
+
+sd_rainegy <- data.frame(data4$sd_rain)
+sd_rainegy.ts <- ts(sd_rainegy, start = 2008, frequency = 1)
+sd_rainegyl1 <- lag(sd_rainegy.ts, -1)
+sd_rain4 <- data.frame(sd_rainegyl1)
+sd_rain4$year <- c(2009:2019)
+colnames(sd_rain4) <- c("sd_rain_t-1", "year")
+
+rain_4 <- merge(rain_egypt1, sd_rain4, by = "year")
+
+total_populationegy <- data.frame(data4$total_population)
+total_populationegy.ts <- ts(total_populationegy, start = 2008, frequency = 1)
+total_totalpopulationegyl1 <- lag(total_populationegy.ts, -1)
+total_population4 <- data.frame(total_totalpopulationegyl1)
+total_population4$year <- c(2009:2019)
+colnames(total_population4) <- c("total_population_t-1", "year")
+
+lagged_4 <- merge(rain_4, total_population4, by = "year")
+
+data4l <- merge(data4, lagged_4, by = "year")
+
+employment_egy <- panell1$rural_employment[panell1$country == "Egypt"]
+employment_egy.ts <- ts(employment_egy, start = 2009, frequency = 1)
+employmentgrowth_egy <- ((employment_egy.ts - lag(employment_egy.ts))/employment_egy.ts)
+employmentgrowth4 <- data.frame(employmentgrowth_egy)
+employmentgrowth4$year <- c(2009:2017)
+colnames(employmentgrowth4) <- c("rural_employment_growth", "year")
+
+data4lg <- merge(data4l, employmentgrowth4, by = "year")
+
+#############Lebanon##################
+
+rain_lebanon <- data.frame(data5$avg_rain)
+rainleb.ts <- ts(rain_lebanon, start = 2008, frequency = 1)
+rainlebl1 <- lag(rainleb.ts, -1)
+rain_lebanon1 <- data.frame(rainlebl1)
+rain_lebanon1$year <- c(2009:2019)
+colnames(rain_lebanon1) <- c("avg_rain_t-1", "year")
+
+sd_rainleb <- data.frame(data5$sd_rain)
+sd_rainleb.ts <- ts(sd_rainleb, start = 2008, frequency = 1)
+sd_rainlebl1 <- lag(sd_rainleb.ts, -1)
+sd_rain5 <- data.frame(sd_rainlebl1)
+sd_rain5$year <- c(2009:2019)
+colnames(sd_rain5) <- c("sd_rain_t-1", "year")
+
+rain_5 <- merge(rain_lebanon1, sd_rain5, by = "year")
+
+total_populationleb <- data.frame(data5$total_population)
+total_populationleb.ts <- ts(total_populationleb, start = 2008, frequency = 1)
+total_totalpopulationlebl1 <- lag(total_populationleb.ts, -1)
+total_population5 <- data.frame(total_totalpopulationlebl1)
+total_population5$year <- c(2009:2019)
+colnames(total_population5) <- c("total_population_t-1", "year")
+
+lagged_5 <- merge(rain_5, total_population5, by = "year")
+
+data5l <- merge(data5, lagged_5, by = "year")
+
+employment_leb <- panell1$rural_employment[panell1$country == "Lebanon"]
+employment_leb.ts <- ts(employment_leb, start = 2009, frequency = 1)
+employmentgrowth_leb <- ((employment_leb.ts - lag(employment_leb.ts))/employment_leb.ts)
+employmentgrowth5 <- data.frame(employmentgrowth_leb)
+employmentgrowth5$year <- c(2009:2017)
+colnames(employmentgrowth5) <- c("rural_employment_growth", "year")
+
+data5lg <- merge(data5l, employmentgrowth5, by = "year")
+
+##########Jordan##############
+
+rain_jordan <- data.frame(data6$avg_rain)
+rainjor.ts <- ts(rain_jordan, start = 2008, frequency = 1)
+rainjorl1 <- lag(rainjor.ts, -1)
+rain_jordan1 <- data.frame(rainjorl1)
+rain_jordan1$year <- c(2009:2019)
+colnames(rain_jordan1) <- c("avg_rain_t-1", "year")
+
+sd_rainjor <- data.frame(data6$sd_rain)
+sd_rainjor.ts <- ts(sd_rainjor, start = 2008, frequency = 1)
+sd_rainjorl1 <- lag(sd_rainjor.ts, -1)
+sd_rain6 <- data.frame(sd_rainjorl1)
+sd_rain6$year <- c(2009:2019)
+colnames(sd_rain6) <- c("sd_rain_t-1", "year")
+
+rain_6 <- merge(rain_jordan1, sd_rain6, by = "year")
+
+total_populationjor <- data.frame(data6$total_population)
+total_populationjor.ts <- ts(total_populationjor, start = 2008, frequency = 1)
+total_totalpopulationjorl1 <- lag(total_populationjor.ts, -1)
+total_population6 <- data.frame(total_totalpopulationjorl1)
+total_population6$year <- c(2009:2019)
+colnames(total_population6) <- c("total_population_t-1", "year")
+
+lagged_6 <- merge(rain_6, total_population6, by = "year")
+
+data6l <- merge(data6, lagged_6, by = "year")
+
+employment_jor <- panell1$rural_employment[panell1$country == "Jordan"]
+employment_jor.ts <- ts(employment_jor, start = 2009, frequency = 1)
+employmentgrowth_jor <- ((employment_jor.ts - lag(employment_jor.ts))/employment_jor.ts)
+employmentgrowth6 <- data.frame(employmentgrowth_jor)
+employmentgrowth6$year <- c(2009:2017)
+colnames(employmentgrowth6) <- c("rural_employment_growth", "year")
+
+data6lg <- merge(data6l, employmentgrowth6, by = "year")
+
+################Turkey###############
+
+rain_turkey <- data.frame(data7$avg_rain)
+raintur.ts <- ts(rain_turkey, start = 2008, frequency = 1)
+rainturl1 <- lag(raintur.ts, -1)
+rain_turkey1 <- data.frame(rainturl1)
+rain_turkey1$year <- c(2009:2019)
+colnames(rain_turkey1) <- c("avg_rain_t-1", "year")
+
+sd_raintur <- data.frame(data7$sd_rain)
+sd_raintur.ts <- ts(sd_raintur, start = 2008, frequency = 1)
+sd_rainturl1 <- lag(sd_raintur.ts, -1)
+sd_rain7 <- data.frame(sd_rainturl1)
+sd_rain7$year <- c(2009:2019)
+colnames(sd_rain7) <- c("sd_rain_t-1", "year")
+
+rain_7 <- merge(rain_turkey1, sd_rain7, by = "year")
+
+total_populationtur <- data.frame(data7$total_population)
+total_populationtur.ts <- ts(total_populationtur, start = 2008, frequency = 1)
+total_totalpopulationturl1 <- lag(total_populationtur.ts, -1)
+total_population7 <- data.frame(total_totalpopulationturl1)
+total_population7$year <- c(2009:2019)
+colnames(total_population7) <- c("total_population_t-1", "year")
+
+lagged_7 <- merge(rain_7, total_population7, by = "year")
+
+data7l <- merge(data7, lagged_7, by = "year")
+
+employment_tur <- panell1$rural_employment[panell1$country == "Turkey"]
+employment_tur.ts <- ts(employment_tur, start = 2009, frequency = 1)
+employmentgrowth_tur <- ((employment_tur.ts - lag(employment_tur.ts))/employment_tur.ts)
+employmentgrowth7 <- data.frame(employmentgrowth_tur)
+employmentgrowth7$year <- c(2009:2017)
+colnames(employmentgrowth7) <- c("rural_employment_growth", "year")
+
+data7lg <- merge(data7l, employmentgrowth7, by = "year")
+
+##########Albania##############
+
+rain_albania <- data.frame(data8$avg_rain)
+rainalb.ts <- ts(rain_albania, start = 2008, frequency = 1)
+rainalbl1 <- lag(rainalb.ts, -1)
+rain_albania1 <- data.frame(rainalbl1)
+rain_albania1$year <- c(2009:2019)
+colnames(rain_albania1) <- c("avg_rain_t-1", "year")
+
+sd_rainalb <- data.frame(data8$sd_rain)
+sd_rainalb.ts <- ts(sd_rainalb, start = 2008, frequency = 1)
+sd_rainalbl1 <- lag(sd_rainalb.ts, -1)
+sd_rain8 <- data.frame(sd_rainalbl1)
+sd_rain8$year <- c(2009:2019)
+colnames(sd_rain8) <- c("sd_rain_t-1", "year")
+
+rain_8 <- merge(rain_albania1, sd_rain8, by = "year")
+
+total_populationalb <- data.frame(data8$total_population)
+total_populationalb.ts <- ts(total_populationalb, start = 2008, frequency = 1)
+total_totalpopulationalbl1 <- lag(total_populationalb.ts, -1)
+total_population8 <- data.frame(total_totalpopulationalbl1)
+total_population8$year <- c(2009:2019)
+colnames(total_population8) <- c("total_population_t-1", "year")
+
+lagged_8 <- merge(rain_8, total_population8, by = "year")
+
+data8l <- merge(data8, lagged_8, by = "year")
+
+employment_alb <- panell1$rural_employment[panell1$country == "Albania"]
+employment_alb.ts <- ts(employment_alb, start = 2009, frequency = 1)
+employmentgrowth_alb <- ((employment_alb.ts - lag(employment_alb.ts))/employment_alb.ts)
+employmentgrowth8 <- data.frame(employmentgrowth_alb)
+employmentgrowth8$year <- c(2009:2017)
+colnames(employmentgrowth8) <- c("rural_employment_growth", "year")
+
+data8lg <- merge(data8l, employmentgrowth8, by = "year")
+
+##########Bosnia#############
+
+rain_bosnia <- data.frame(data9$avg_rain) 
+rainbos.ts <- ts(rain_bosnia, start = 2008, frequency = 1)
+rainbosl1 <- lag(rainbos.ts, -1)
+rain_bosnia1 <- data.frame(rainbosl1)
+rain_bosnia1$year <- c(2009:2019)
+colnames(rain_bosnia1) <- c("avg_rain_t-1", "year")
+
+sd_rainbos <- data.frame(data9$sd_rain)
+sd_rainbos.ts <- ts(sd_rainbos, start = 2008, frequency = 1)
+sd_rainbosl1 <- lag(sd_rainbos.ts, -1)
+sd_rain9 <- data.frame(sd_rainbosl1)
+sd_rain9$year <- c(2009:2019)
+colnames(sd_rain9) <- c("sd_rain_t-1", "year")
+
+rain_9 <- merge(rain_bosnia1, sd_rain9, by = "year")
+
+total_populationbos <- data.frame(data9$total_population)
+total_populationbos.ts <- ts(total_populationbos, start = 2008, frequency = 1)
+total_totalpopulationbosl1 <- lag(total_populationbos.ts, -1)
+total_population9 <- data.frame(total_totalpopulationbosl1)
+total_population9$year <- c(2009:2019)
+colnames(total_population9) <- c("total_population_t-1", "year")
+
+lagged_9 <- merge(rain_9, total_population9, by = "year")
+
+data9l <- merge(data9, lagged_9, by = "year")
+
+employment_bos <- panell1$rural_employment[panell1$country == "Bosnia Herzegowina"]
+employment_bos.ts <- ts(employment_bos, start = 2009, frequency = 1)
+employmentgrowth_bos <- ((employment_bos.ts - lag(employment_bos.ts))/employment_bos.ts)
+employmentgrowth9 <- data.frame(employmentgrowth_bos)
+employmentgrowth9$year <- c(2009:2017)
+colnames(employmentgrowth9) <- c("rural_employment_growth", "year")
+
+data9lg <- merge(data9l, employmentgrowth8, by = "year")
+
+#############Croatia############
+
+rain_croatia <- data.frame(data10$avg_rain)
+raincro.ts <- ts(rain_croatia, start = 2008, frequency = 1)
+raincrol1 <- lag(raincro.ts, -1)
+rain_croatia1 <- data.frame(raincrol1)
+rain_croatia1$year <- c(2009:2019)
+colnames(rain_croatia1) <- c("avg_rain_t-1", "year")
+
+sd_raincro <- data.frame(data10$sd_rain)
+sd_raincro.ts <- ts(sd_raincro, start = 2008, frequency = 1)
+sd_raincrol1 <- lag(sd_raincro.ts, -1)
+sd_rain10 <- data.frame(sd_raincrol1)
+sd_rain10$year <- c(2009:2019)
+colnames(sd_rain10) <- c("sd_rain_t-1", "year")
+
+rain_10 <- merge(rain_croatia1, sd_rain10, by = "year")
+
+total_populationcro <- data.frame(data10$total_population)
+total_populationcro.ts <- ts(total_populationcro, start = 2008, frequency = 1)
+total_totalpopulationcrol1 <- lag(total_populationcro.ts, -1)
+total_population10 <- data.frame(total_totalpopulationcrol1)
+total_population10$year <- c(2009:2019)
+colnames(total_population10) <- c("total_population_t-1", "year")
+
+lagged_10 <- merge(rain_10, total_population10, by = "year")
+
+data10l <- merge(data10, lagged_10, by = "year")
+
+employment_cro <- panell1$rural_employment[panell1$country == "Croatia"]
+employment_cro.ts <- ts(employment_cro, start = 2009, frequency = 1)
+employmentgrowth_cro <- ((employment_cro.ts - lag(employment_cro.ts))/employment_cro.ts)
+employmentgrowth10 <- data.frame(employmentgrowth_cro)
+employmentgrowth10$year <- c(2009)
+colnames(employmentgrowth10) <- c("rural_employment_growth", "year")
+
+data10lg <- merge(data10l, employmentgrowth10, by = "year")
+
+###########Montenegro############
+
+rain_montenegro <- data.frame(data11$avg_rain)
+rainmon.ts <- ts(rain_montenegro, start = 2008, frequency = 1)
+rainmonl1 <- lag(rainmon.ts, -1)
+rain_montenegro1 <- data.frame(rainmonl1)
+rain_montenegro1$year <- c(2009:2019)
+colnames(rain_montenegro1) <- c("avg_rain_t-1", "year")
+
+sd_rainmon <- data.frame(data11$sd_rain)
+sd_rainmon.ts <- ts(sd_rainmon, start = 2008, frequency = 1)
+sd_rainmonl1 <- lag(sd_rainmon.ts, -1)
+sd_rain11 <- data.frame(sd_rainmonl1)
+sd_rain11$year <- c(2009:2019)
+colnames(sd_rain11) <- c("sd_rain_t-1", "year")
+
+rain_11 <- merge(rain_montenegro1, sd_rain11, by = "year")
+
+total_populationmon <- data.frame(data11$total_population)
+total_populationmon.ts <- ts(total_populationmon, start = 2008, frequency = 1)
+total_totalpopulationmonl1 <- lag(total_populationmon.ts, -1)
+total_population11 <- data.frame(total_totalpopulationmonl1)
+total_population11$year <- c(2009:2019)
+colnames(total_population11) <- c("total_population_t-1", "year")
+
+lagged_11 <- merge(rain_11, total_population11, by = "year")
+
+data11l <- merge(data11, lagged_11, by = "year")
+
+employment_mon <- panell1$rural_employment[panell1$country == "Montenegro"]
+employment_mon.ts <- ts(employment_mon, start = 2009, frequency = 1)
+employmentgrowth_mon <- ((employment_mon.ts - lag(employment_mon.ts))/employment_mon.ts)
+employmentgrowth11 <- data.frame(employmentgrowth_mon)
+employmentgrowth11$year <- c(2009:2017)
+colnames(employmentgrowth11) <- c("rural_employment_growth", "year")
+
+data11lg <- merge(data11l, employmentgrowth11, by = "year")
+
+
+###########Belarus##########
+
+rain_belarus <- data.frame(data12$avg_rain)
+rainbel.ts <- ts(rain_belarus, start = 2008, frequency = 1)
+rainbell1 <- lag(rainbel.ts, -1)
+rain_belarus1 <- data.frame(rainbell1)
+rain_belarus1$year <- c(2009:2019)
+colnames(rain_belarus1) <- c("avg_rain_t-1", "year")
+
+sd_rainbel <- data.frame(data12$sd_rain)
+sd_rainbel.ts <- ts(sd_rainbel, start = 2008, frequency = 1)
+sd_rainbell1 <- lag(sd_rainbel.ts, -1)
+sd_rain12 <- data.frame(sd_rainbell1)
+sd_rain12$year <- c(2009:2019)
+colnames(sd_rain12) <- c("sd_rain_t-1", "year")
+
+rain_12 <- merge(rain_belarus1, sd_rain12, by = "year")
+
+total_populationbel <- data.frame(data12$total_population)
+total_populationbel.ts <- ts(total_populationbel, start = 2008, frequency = 1)
+total_totalpopulationbell1 <- lag(total_populationbel.ts, -1)
+total_population12 <- data.frame(total_totalpopulationbell1)
+total_population12$year <- c(2009:2019)
+colnames(total_population12) <- c("total_population_t-1", "year")
+
+lagged_12 <- merge(rain_12, total_population12, by = "year")
+
+data12l <- merge(data12, lagged_12, by = "year")
+
+employment_bel <- panell1$rural_employment[panell1$country == "Belarus"]
+employment_bel.ts <- ts(employment_bel, start = 2009, frequency = 1)
+employmentgrowth_bel <- ((employment_bel.ts - lag(employment_bel.ts))/employment_bel.ts)
+employmentgrowth12 <- data.frame(employmentgrowth_bel)
+employmentgrowth12$year <- c(2009:2017)
+colnames(employmentgrowth12) <- c("rural_employment_growth", "year")
+
+data12lg <- merge(data12l, employmentgrowth12, by = "year")
+
+
+###########Armenia###########
+
+rain_armenia <- data.frame(data13$avg_rain)
+rainarm.ts <- ts(rain_armenia, start = 2008, frequency = 1)
+rainarml1 <- lag(rainarm.ts, -1)
+rain_armenia1 <- data.frame(rainarml1)
+rain_armenia1$year <- c(2009:2019)
+colnames(rain_armenia1) <- c("avg_rain_t-1", "year")
+
+sd_rainarm <- data.frame(data13$sd_rain)
+sd_rainarm.ts <- ts(sd_rainarm, start = 2008, frequency = 1)
+sd_rainarml1 <- lag(sd_rainarm.ts, -1)
+sd_rain13 <- data.frame(sd_rainarml1)
+sd_rain13$year <- c(2009:2019)
+colnames(sd_rain13) <- c("sd_rain_t-1", "year")
+
+rain_13 <- merge(rain_armenia1, sd_rain13, by = "year")
+
+
+total_populationarm <- data.frame(data13$total_population)
+total_populationarm.ts <- ts(total_populationarm, start = 2008, frequency = 1)
+total_totalpopulationarml1 <- lag(total_populationarm.ts, -1)
+total_population13 <- data.frame(total_totalpopulationarml1)
+total_population13$year <- c(2009:2019)
+colnames(total_population13) <- c("total_population_t-1", "year")
+
+lagged_13 <- merge(rain_13, total_population13, by = "year")
+
+data13l <- merge(data13, lagged_13, by = "year")
+
+employment_arm <- panell1$rural_employment[panell1$country == "Armenia"]
+employment_arm.ts <- ts(employment_arm, start = 2009, frequency = 1)
+employmentgrowth_arm <- ((employment_arm.ts - lag(employment_arm.ts))/employment_arm.ts)
+employmentgrowth13 <- data.frame(employmentgrowth_arm)
+employmentgrowth13$year <- c(2009:2017)
+colnames(employmentgrowth13) <- c("rural_employment_growth", "year")
+
+data13lg <- merge(data13l, employmentgrowth13, by = "year")
+
+
+##########Macedonia#############
+
+rain_macedonia <- data.frame(data14$avg_rain)
+rainmac.ts <- ts(rain_macedonia, start = 2008, frequency = 1)
+rainmacl1 <- lag(rainmac.ts, -1)
+rain_macedonia1 <- data.frame(rainmacl1)
+rain_macedonia1$year <- c(2009:2019)
+colnames(rain_macedonia1) <- c("avg_rain_t-1", "year")
+
+sd_rainmac <- data.frame(data14$sd_rain)
+sd_rainmac.ts <- ts(sd_rainmac, start = 2008, frequency = 1)
+sd_rainmacl1 <- lag(sd_rainmac.ts, -1)
+sd_rain14 <- data.frame(sd_rainmacl1)
+sd_rain14$year <- c(2009:2019)
+colnames(sd_rain14) <- c("sd_rain_t-1", "year")
+
+rain_14 <- merge(rain_macedonia1, sd_rain14, by = "year")
+
+total_populationmac <- data.frame(data14$total_population)
+total_populationmac.ts <- ts(total_populationmac, start = 2008, frequency = 1)
+total_totalpopulationmacl1 <- lag(total_populationmac.ts, -1)
+total_population14 <- data.frame(total_totalpopulationmacl1)
+total_population14$year <- c(2009:2019)
+colnames(total_population14) <- c("total_population_t-1", "year")
+
+lagged_14 <- merge(rain_14, total_population14, by = "year")
+
+data14l <- merge(data14, lagged_14, by = "year")
+
+employment_mac <- panell1$rural_employment[panell1$country == "North Macedonia"]
+employment_mac.ts <- ts(employment_mac, start = 2009, frequency = 1)
+employmentgrowth_mac<- ((employment_mac.ts - lag(employment_mac.ts))/employment_mac.ts)
+employmentgrowth14 <- data.frame(employmentgrowth_mac)
+employmentgrowth14$year <- c(2009:2016)
+colnames(employmentgrowth14) <- c("rural_employment_growth", "year")
+
+data14lg <- merge(data14l, employmentgrowth14, by = "year")
+
+
+###########Serbia#############
+
+rain_serbia <- data.frame(data15$avg_rain)
+rainser.ts <- ts(rain_serbia, start = 2008, frequency = 1)
+rainserl1 <- lag(rainser.ts, -1)
+rain_serbia1 <- data.frame(rainserl1)
+rain_serbia1$year <- c(2009:2019)
+colnames(rain_serbia1) <- c("avg_rain_t-1", "year")
+
+sd_rainser <- data.frame(data15$sd_rain)
+sd_rainser.ts <- ts(sd_rainser, start = 2008, frequency = 1)
+sd_rainserl1 <- lag(sd_rainser.ts, -1)
+sd_rain15 <- data.frame(sd_rainserl1)
+sd_rain15$year <- c(2009:2019)
+colnames(sd_rain15) <- c("sd_rain_t-1", "year")
+
+rain_15 <- merge(rain_serbia1, sd_rain15, by = "year")
+
+total_populationser <- data.frame(data15$total_population)
+total_populationser.ts <- ts(total_populationser, start = 2008, frequency = 1)
+total_totalpopulationserl1 <- lag(total_populationser.ts, -1)
+total_population15 <- data.frame(total_totalpopulationserl1)
+total_population15$year <- c(2009:2019)
+colnames(total_population15) <- c("total_population_t-1", "year")
+
+lagged_15 <- merge(rain_15, total_population15, by = "year")
+
+data15l <- merge(data15, lagged_15, by = "year")
+
+employment_ser <- panell1$rural_employment[panell1$country == "Serbia"]
+employment_ser.ts <- ts(employment_ser, start = 2009, frequency = 1)
+employmentgrowth_ser<- ((employment_ser.ts - lag(employment_ser.ts))/employment_ser.ts)
+employmentgrowth15 <- data.frame(employmentgrowth_ser)
+employmentgrowth15$year <- c(2009:2017)
+colnames(employmentgrowth15) <- c("rural_employment_growth", "year")
+
+data15lg <- merge(data15l, employmentgrowth15, by = "year")
+
+###########Ukraine################
+
+rain_ukraine <- data.frame(data16$avg_rain)
+rainukr.ts <- ts(rain_ukraine, start = 2008, frequency = 1)
+rainukrl1 <- lag(rainukr.ts, -1)
+rain_ukraine1 <- data.frame(rainukrl1)
+rain_ukraine1$year <- c(2009:2019)
+colnames(rain_ukraine1) <- c("avg_rain_t-1", "year")
+
+sd_rainukr <- data.frame(data16$sd_rain)
+sd_rainukr.ts <- ts(sd_rainukr, start = 2008, frequency = 1)
+sd_rainukrl1 <- lag(sd_rainukr.ts, -1)
+sd_rain16 <- data.frame(sd_rainukrl1)
+sd_rain16$year <- c(2009:2019)
+colnames(sd_rain16) <- c("sd_rain_t-1", "year")
+
+rain_16 <- merge(rain_ukraine1, sd_rain16, by = "year")
+
+total_populationukr <- data.frame(data16$total_population)
+total_populationukr.ts <- ts(total_populationukr, start = 2008, frequency = 1)
+total_totalpopulationukrl1 <- lag(total_populationukr.ts, -1)
+total_population16 <- data.frame(total_totalpopulationukrl1)
+total_population16$year <- c(2009:2019)
+colnames(total_population16) <- c("total_population_t-1", "year")
+
+lagged_16 <- merge(rain_16, total_population16, by = "year")
+
+data16l <- merge(data16, lagged_16, by = "year")
+
+employment_ukr <- panell1$rural_employment[panell1$country == "Ukraine"]
+employment_ukr.ts <- ts(employment_ukr, start = 2009, frequency = 1)
+employmentgrowth_ukr<- ((employment_ukr.ts - lag(employment_ukr.ts))/employment_ukr.ts)
+employmentgrowth16 <- data.frame(employmentgrowth_ukr)
+employmentgrowth16$year <- c(2009:2017)
+colnames(employmentgrowth16) <- c("rural_employment_growth", "year")
+
+data16lg <- merge(data16l, employmentgrowth16, by = "year")
+
+
+##########Georgia##############
+
+rain_georgia <- data.frame(data17$avg_rain)
+raingeo.ts <- ts(rain_georgia, start = 2008, frequency = 1)
+raingeol1 <- lag(raingeo.ts, -1)
+rain_georgia1 <- data.frame(raingeol1)
+rain_georgia1$year <- c(2009:2019)
+colnames(rain_georgia1) <- c("avg_rain_t-1", "year")
+
+sd_raingeo <- data.frame(data17$sd_rain)
+sd_raingeo.ts <- ts(sd_raingeo, start = 2008, frequency = 1)
+sd_raingeol1 <- lag(sd_raingeo.ts, -1)
+sd_rain17 <- data.frame(sd_raingeol1)
+sd_rain17$year <- c(2009:2019)
+colnames(sd_rain17) <- c("sd_rain_t-1", "year")
+
+rain_17 <- merge(rain_georgia1, sd_rain17, by = "year")
+
+total_populationgeo <- data.frame(data17$total_population)
+total_populationgeo.ts <- ts(total_populationgeo, start = 2008, frequency = 1)
+total_totalpopulationgeol1 <- lag(total_populationgeo.ts, -1)
+total_population17 <- data.frame(total_totalpopulationgeol1)
+total_population17$year <- c(2009:2019)
+colnames(total_population17) <- c("total_population_t-1", "year")
+
+lagged_17 <- merge(rain_17, total_population17, by = "year")
+
+data17l <- merge(data17, lagged_17, by = "year")
+
+employment_geo <- panell1$rural_employment[panell1$country == "Georgia"]
+employment_geo.ts <- ts(employment_geo, start = 2009, frequency = 1)
+employmentgrowth_geo<- ((employment_geo.ts - lag(employment_geo.ts))/employment_geo.ts)
+employmentgrowth17 <- data.frame(employmentgrowth_geo)
+employmentgrowth17$year <- c(2009:2017)
+colnames(employmentgrowth17) <- c("rural_employment_growth", "year")
+
+data17lg <- merge(data17l, employmentgrowth17, by = "year")
+
+
+##########Iraq############
+
+rain_iraq <- data.frame(data18$avg_rain)
+rainira.ts <- ts(rain_iraq, start = 2008, frequency = 1)
+rainiral1 <- lag(rainira.ts, -1)
+rain_iraq1 <- data.frame(rainiral1)
+rain_iraq1$year <- c(2009:2019)
+colnames(rain_iraq1) <- c("avg_rain_t-1", "year")
+
+sd_rainira <- data.frame(data18$sd_rain)
+sd_rainira.ts <- ts(sd_rainira, start = 2008, frequency = 1)
+sd_rainiral1 <- lag(sd_rainira.ts, -1)
+sd_rain18 <- data.frame(sd_rainiral1)
+sd_rain18$year <- c(2009:2019)
+colnames(sd_rain18) <- c("sd_rain_t-1", "year")
+
+rain_18 <- merge(rain_iraq1, sd_rain18, by = "year")
+
+total_populationira <- data.frame(data18$total_population)
+total_populationira.ts <- ts(total_populationira, start = 2008, frequency = 1)
+total_totalpopulationiral1 <- lag(total_populationira.ts, -1)
+total_population18 <- data.frame(total_totalpopulationiral1)
+total_population18$year <- c(2009:2019)
+colnames(total_population18) <- c("total_population_t-1", "year")
+
+lagged_18 <- merge(rain_18, total_population18, by = "year")
+
+data18l <- merge(data18, lagged_18, by = "year")
+
+employment_ira <- panell1$rural_employment[panell1$country == "Iraq"]
+employment_ira.ts <- ts(employment_ira, start = 2009, frequency = 1)
+employmentgrowth_ira<- ((employment_ira.ts - lag(employment_ira.ts))/employment_ira.ts)
+employmentgrowth18 <- data.frame(employmentgrowth_ira)
+employmentgrowth18$year <- c(2009:2017)
+colnames(employmentgrowth18) <- c("rural_employment_growth", "year")
+
+data18lg <- merge(data18l, employmentgrowth18, by = "year")
+
+#############Azerbaijan##############
+
+rain_azerbaijan <- data.frame(data19$avg_rain)
+rainaze.ts <- ts(rain_azerbaijan, start = 2008, frequency = 1)
+rainazel1 <- lag(rainaze.ts, -1)
+rain_azerbaijan1 <- data.frame(rainazel1)
+rain_azerbaijan1$year <- c(2009:2019)
+colnames(rain_azerbaijan1) <- c("avg_rain_t-1", "year")
+
+sd_rainaze <- data.frame(data19$sd_rain)
+sd_rainaze.ts <- ts(sd_rainaze, start = 2008, frequency = 1)
+sd_rainazel1 <- lag(sd_rainaze.ts, -1)
+sd_rain19 <- data.frame(sd_rainazel1)
+sd_rain19$year <- c(2009:2019)
+colnames(sd_rain19) <- c("sd_rain_t-1", "year")
+
+rain_19 <- merge(rain_azerbaijan1, sd_rain19, by = "year")
+
+total_populationaze <- data.frame(data19$total_population)
+total_populationaze.ts <- ts(total_populationaze, start = 2008, frequency = 1)
+total_totalpopulationazel1 <- lag(total_populationaze.ts, -1)
+total_population19 <- data.frame(total_totalpopulationazel1)
+total_population19$year <- c(2009:2019)
+colnames(total_population19) <- c("total_population_t-1", "year")
+
+lagged_19 <- merge(rain_19, total_population19, by = "year")
+
+data19l <- merge(data19, lagged_19, by = "year")
+
+employment_aze <- panell1$rural_employment[panell1$country == "Azerbaijan"]
+employment_aze.ts <- ts(employment_aze, start = 2009, frequency = 1)
+employmentgrowth_aze<- ((employment_aze.ts - lag(employment_aze.ts))/employment_aze.ts)
+employmentgrowth19 <- data.frame(employmentgrowth_aze)
+employmentgrowth19$year <- c(2009:2016)
+colnames(employmentgrowth19) <- c("rural_employment_growth", "year")
+
+data19lg <- merge(data19l, employmentgrowth19, by = "year")
+
+########Extract Country Data Sample Countries, Female Employment, Investment#############
+
+sum1 <- as.data.frame(t(c("Morocco", "MENA", sum(data1$renew_invest, na.rm = TRUE))))
+sum2 <- as.data.frame(t(c("Algeria", "MENA", sum(data2$renew_invest, na.rm = TRUE))))
+sum3 <- as.data.frame(t(c("Tunisia", "MENA", sum(data3$renew_invest, na.rm = TRUE))))
+sum4 <- as.data.frame(t(c("Egypt", "MENA", sum(data4$renew_invest, na.rm = TRUE))))
+sum5 <- as.data.frame(t(c("Lebanon", "MENA", sum(data5$renew_invest, na.rm = TRUE))))
+sum6 <- as.data.frame(t(c("Jordan", "MENA", sum(data6$renew_invest, na.rm = TRUE))))
+sum7 <- as.data.frame(t(c("Turkey", "Europe", sum(data7$renew_invest, na.rm = TRUE))))
+sum8 <- as.data.frame(t(c("Albania", "Europe",  sum(data8$renew_invest, na.rm = TRUE))))
+sum9 <- as.data.frame(t(c("Bosnia and Herzegowina", "Europe",  sum(data9$renew_invest, na.rm = TRUE))))
+sum10 <- as.data.frame(t(c("Croatia", "Europe", sum(data10$renew_invest, na.rm = TRUE))))
+sum11 <- as.data.frame(t(c("Montenegro", "Europe",  sum(data11$renew_invest, na.rm = TRUE))))
+sum12 <- as.data.frame(t(c("Belarus", "Europe", sum(data12$renew_invest, na.rm = TRUE))))
+sum13 <- as.data.frame(t(c("Armenia", "Central Asia", sum(data13$renew_invest, na.rm = TRUE))))
+sum14 <- as.data.frame(t(c("North Macedonia", "Europe", sum(data14$renew_invest, na.rm = TRUE))))
+sum15 <- as.data.frame(t(c("Serbia", "Europe", sum(data15$renew_invest, na.rm = TRUE))))
+sum16 <- as.data.frame(t(c("Ukraine", "Europe", sum(data16$renew_invest, na.rm = TRUE))))
+sum17 <- as.data.frame(t(c("Georgia", "Central Asia", sum(data17$renew_invest, na.rm = TRUE))))
+sum18 <- as.data.frame(t(c("Iraq", "MENA", sum(data18$renew_invest, na.rm = TRUE))))
+sum19 <- as.data.frame(t(c("Azerbaijan", "Central Asia" ,sum(data19$renew_invest, na.rm = TRUE))))
+
+countrytotal <- bind_rows(list(sum1, sum2, sum3, sum4, sum5, sum6, sum7,
+                               sum8, sum9, sum10, sum11, sum12, sum13, sum14,
+                               sum15, sum16, sum17, sum18, sum19))
+
+countrytotal$V3 <- as.numeric(countrytotal$V3)
+countrytotal$V3 <- countrytotal$V3/1000
+
+colnames(countrytotal) <- c("Country", "Region", "Financial Flows into Renewable Energy (in thousands)")
+
+countrytotal <- countrytotal[order(countrytotal$Country),]
+
+data_ndc <- read_xlsx("./Data_found/renewables_share.xlsx")
+
+countrytotal1 <- merge(countrytotal, data_ndc, by = "Country")
+
+stargazer(as.data.frame(countrytotal1),
+          type = "html",
+          title = "Renewable Energy Finance Inflows and Policy Targets",
+          digits = 2,
+          notes.align = "c",
+          notes.append = FALSE,
+          notes = c("Source: OECD.Stat (2021) and UNFCCC (2021). Total international financial flows received for renewable energy development that are classified as development assistance, by Country during the period 2008 to 2018 in 2019 USD. The renewable energy targets for 2030 are displayed given they have stated specific numbers in their NDCs for the Paris Agreement.") ,
+          summary = FALSE,
+          out = "countries3.doc")
+
+
+fem1 <- as.data.frame(t(c("Morocco", "MENA", mean(data1$share_female, digits = 2, na.rm = TRUE))))
+fem2 <- as.data.frame(t(c("Algeria", "MENA", mean(data2$share_female, digits = 2, na.rm = TRUE))))
+fem3 <- as.data.frame(t(c("Tunisia", "MENA", mean(data3$share_female, digits = 2, na.rm = TRUE))))
+fem4 <- as.data.frame(t(c("Egypt", "MENA", mean(data4$share_female, digits = 2, na.rm = TRUE))))
+fem5 <- as.data.frame(t(c("Lebanon", "MENA", mean(data5$share_female, digits = 2, na.rm = TRUE))))
+fem6 <- as.data.frame(t(c("Jordan", "MENA", mean(data6$share_female, digits = 2, na.rm = TRUE))))
+fem7 <- as.data.frame(t(c("Turkey", "Europe", mean(data7$share_female, digits = 2, na.rm = TRUE))))
+fem8 <- as.data.frame(t(c("Albania", "Europe", mean(data8$share_female, digits = 2, na.rm = TRUE))))
+fem9 <- as.data.frame(t(c("Bosnia and Herzegowina", "Europe", mean(data9$share_female, digits = 2, na.rm = TRUE))))
+fem10 <- as.data.frame(t(c("Croatia", "Europe", mean(data10$share_female, digits = 2, na.rm = TRUE))))
+fem11 <- as.data.frame(t(c("Montenegro", "Europe", mean(data11$share_female, digits = 2, na.rm = TRUE))))
+fem12 <- as.data.frame(t(c("Belarus", "Europe", mean(data12$share_female, digits = 2, na.rm = TRUE))))
+fem13 <- as.data.frame(t(c("Armenia", "Central Asia", mean(data13$share_female, digits = 2, na.rm = TRUE))))
+fem14 <- as.data.frame(t(c("North Macedonia", "Europe", mean(data14$share_female, digits = 2, na.rm = TRUE))))
+fem15 <- as.data.frame(t(c("Serbia", "Europe", mean(data15$share_female, digits = 2, na.rm = TRUE))))
+fem16 <- as.data.frame(t(c("Ukraine", "Europe", mean(data16$share_female, digits = 2, na.rm = TRUE))))
+fem17 <- as.data.frame(t(c("Georgia", "Central Asia", mean(data17$share_female, digits = 2, na.rm = TRUE))))
+fem18 <- as.data.frame(t(c("Iraq", "MENA",  mean(data18$share_female, digits = 2, na.rm = TRUE))))
+fem19 <- as.data.frame(t(c("Azerbaijan", "Central Asia", mean(data19$share_female, digits = 2, na.rm = TRUE))))
+
+femaletotal <- bind_rows(list(fem1, fem2, fem3, fem4, fem5, fem6, fem7, fem8,
+                              fem9, fem10, fem11, fem12, fem13, fem14, fem15, fem16,
+                              fem17, fem18, fem19))
+
+femaletotal$V3 <- as.numeric(femaletotal$V3)
+
+colnames(femaletotal) <- c("Country", "Region", "Share of Females in the Rural Labor Force")
+
+femaletotal <- femaletotal[order(femaletotal$Country),]
+
+stargazer(as.data.frame(femaletotal),
+          type = "html",
+          title = "Share of Females in the Rural Labor Force",
+          digits = 2,
+          notes.align = "c",
+          notes.append = FALSE,
+          notes = c("Source: ILO (2019a), calculated within the dataset described in section 5.1. by the arithmetic mean of the share of females in the rural labor force period from 2008 to 2018.") ,
+          summary = FALSE,
+          out = "females1.doc")
+
+
+oda_data <- read_xlsx("./Data_found/ODAeligbility.xlsx")
+
+oda_data$ODAeligibility <- "yes"
+
+oda_data$ODAeligibility[oda_data$Country == "Croatia"] <- "until 2011"
+
+stargazer(as.data.frame(oda_data),
+          type = "html",
+          title = "Sample Countries, ODA Eligibility and 2018 GDP per capita",
+          digits = 2,
+          notes.align = "c",
+          notes.append = FALSE,
+          notes = c("Source: OECD (2021) and World Bank (2021a). Sample Country's status of eligibility for receiving development assistance given their GDP per capita levels in 2010 US Dollars and their classification according to their development status given the OECD DAC list.") ,
+          summary = FALSE,
+          out = "odaeligbility1.doc")
+
+#########Merging country-level data#########
+
+paneldata1 <- bind_rows(list(data1, data2, data3, data4, data5, data6, data7, data8, data9, data10,
+                             data11, data12, data13, data14, data15, data16, data17, data18, data19))  
+
+paneldatal1 <- bind_rows(list(data1l, data2l, data3l, data4l, data5l, data6l, data7l, data8l, data9l, data10l,
+                              data11l, data12l, data13l, data14l, data15l, data16l, data17l, data18l, data19l))  
+
+
+paneldatalg1 <- bind_rows(list(data1lg, data2lg, data3lg, data4lg, data5lg, data6lg, data7lg, data8lg, data9lg, data10lg,
+                               data11lg, data12lg, data13lg, data14lg, data15lg, data16lg, data17lg, data18lg, data19lg))
+
+
+panel1 <- paneldata1 #data without lagged values
+
+panell1 <- paneldatal1 #only data with lagged values => central dataset in the analysis
+
+panellg1 <- paneldatalg1 #data with lagged values and growth rates
+
+########Transform and clear data########
+
+panell1 <- paneldatal1
+panell1[is.na(panell1)] <- 0
+panell1 <- na.omit(panell1)
+
+######Renewable Energy Investment#####
+
+plot(density(panell1$renew_invest))
+
+panell1$ln_invest <- log(panell1$renew_invest)
+
+panell1$invest_GDP <- (panell1$renew_invest/panell1$gdp_capita)
+
+plot(density(panell1$invest_GDP))
+panell1$ln_investGDP <- log(panell1$invest_GDP)
+
+#########Employment##############
+
+panell1$rural_employment <- (panell1$rural_employ)/(panell1$rural_pop)
+
+plot(density(panell1$rural_employment))
+
+########Control Variables###########
+
+
+plot(density(panell1$gdp_capita))
+panell1$ln_gdp <- log(panell1$gdp_capita)
+
+plot(density(panell1$gdp_capita_growth))
+
+plot(density(panell1$growth_volatility))
+panell1$ln_volatility <- log(panell1$growth_volatility)
+
+plot(density(panell1$size))
+panell1$ln_size <- log(panell1$size)
+
+panell1 <- rename(panell1, share_exports = 'exports/gdp_perc')
+plot(density(panell1$share_exports))
+
+plot(density(panell1$inflation))
+
+plot(density(panell1$share_female))
+panell1$ln_femaleemploy <- log(panell1$share_female)
+
+panell1$year.f <- factor(panell1$year)
+is.factor(panell1$year.f)
+
+panell1 <- rename(panell1, lngdp = 'ln_gdp')
+panell1 <- rename(panell1, lninvestgdp = 'ln_investGDP')
+panell1 <- rename(panell1, political_stability = 'political_ stability')
+
+panell1$Morocco <- 0
+panell1$Morocco[panell1$country == "Morocco"] <- 1
+
+panell1$Turkey <- 0
+panell1$Turkey[panell1$country == "Turkey"] <- 1
+
+panell1$Egypt <- 0
+panell1$Egypt[panell1$country == "Egypt"] <- 1
+
+panell1$investxmorocco <- panell1$lninvestgdp*panell1$Morocco
+panell1$investxruleoflaw <- panell1$invest_GDP*panell1$ruleoflaw
+
+#########intrumental variables###########
+
+panell1$ln_totalPopulation <- log(panell1$total_population)
+panell1$ln_rain <- log(panell1$avg_rain)
+panell1$var_rain <- (panell1$sd_rain)^2
+
+plot(density(panell1$`avg_rain_t-1`))
+panell1$ln_rain_t_1 <- log(panell1$`avg_rain_t-1`)
+panell1$var_rain_t_1 <- (panell1$`sd_rain_t-1`)^2
+
+panell1$ln_totalPopulation_t_1 <- log(panell1$`total_population_t-1`)
+
+
+panell1$diff_totalPopulation <- panell1$total_population-panell1$`total_population_t-1`
+plot(density(panell1$diff_totalPopulation))
+
+panell1$landlocked <- 0
+panell1$landlocked[panell1$country == "Belarus"] <- 1
+panell1$landlocked[panell1$country == "Armenia"] <- 1
+panell1$landlocked[panell1$country == "North Macedonia"] <- 1
+panell1$landlocked[panell1$country == "Serbia"] <- 1
+panell1$landlocked[panell1$country == "Azerbaijan"] <- 1
+
+
+panell1[panell1 == -Inf] <- NA
+panell1 <- na.omit(panell1)
+
+###########Choice of Institutional Variable#################
+
+cor(panell1$ruleoflaw, panell1$rural_employment) 
+cor(panell1$political_stability, panell1$rural_employment) 
+cor(panell1$govt_effectiveness, panell1$rural_employment) 
+cor(panell1$regulatory_quality, panell1$rural_employment) 
+cor(panell1$corruption_control, panell1$rural_employment) 
+
+cor(panell1$ruleoflaw, panell1$lninvestgdp) 
+cor(panell1$political_stability, panell1$lninvestgdp) 
+cor(panell1$govt_effectiveness, panell1$lninvestgdp) 
+cor(panell1$regulatory_quality, panell1$lninvestgdp) 
+cor(panell1$corruption_control, panell1$lninvestgdp) 
+
+cor(panell1$ruleoflaw, panell1$lngdp) 
+cor(panell1$political_stability, panell1$lngdp) 
+cor(panell1$govt_effectiveness, panell1$lngdp) 
+cor(panell1$regulatory_quality, panell1$lngdp) 
+cor(panell1$corruption_control, panell1$lngdp) 
+
+cor(panell1$ruleoflaw, panell1$ln_volatility) 
+cor(panell1$political_stability, panell1$ln_volatility) 
+cor(panell1$govt_effectiveness, panell1$ln_volatility) 
+cor(panell1$regulatory_quality, panell1$ln_volatility) 
+cor(panell1$corruption_control, panell1$ln_volatility) 
+
+cor(panell1$ruleoflaw, panell1$gdp_capita_growth) 
+cor(panell1$political_stability, panell1$gdp_capita_growth) 
+cor(panell1$govt_effectiveness, panell1$gdp_capita_growth) 
+cor(panell1$regulatory_quality, panell1$gdp_capita_growth) 
+cor(panell1$corruption_control, panell1$gdp_capita_growth) 
+
+cor(panell1$ruleoflaw, panell1$inflation) 
+cor(panell1$political_stability, panell1$inflation) 
+cor(panell1$govt_effectiveness, panell1$inflation) 
+cor(panell1$regulatory_quality, panell1$inflation) 
+cor(panell1$corruption_control, panell1$inflation) 
+
+cor(panell1$ruleoflaw, panell1$share_exports) 
+cor(panell1$political_stability, panell1$share_exports) 
+cor(panell1$govt_effectiveness, panell1$share_exports) 
+cor(panell1$regulatory_quality, panell1$share_exports)  
+cor(panell1$corruption_control, panell1$share_exports) 
+
+cor(panell1$ruleoflaw, panell1$ln_sharefemale) 
+cor(panell1$political_stability, panell1$ln_sharefemale) 
+cor(panell1$govt_effectiveness, panell1$ln_sharefemale) 
+cor(panell1$regulatory_quality, panell1$ln_sharefemale) 
+cor(panell1$corruption_control, panell1$ln_sharefemale)
+
+
+
+###########Descriptive Statistics Output#############
+
+
+stargazer(as.data.frame(panell1[c("rural_employment", "share_female", "ln_femaleemploy", "renew_invest", "invest_GDP", "lninvestgdp", "gdp_capita", "lngdp", "growth_volatility", "ln_volatility", "gdp_capita_growth",
+                                  "share_exports", "ruleoflaw", "political_stability", "govt_effectiveness", "regulatory_quality", "corruption_control" , "total_population", "diff_totalPopulation",
+                                  "avg_rain", "ln_rain_t_1", "var_rain_t_1")]),
+          type = "html",
+          title = "Descriptive Statistics, Variable Overview",
+          digits = 2,
+          notes.align = "c",
+          notes.append = FALSE,
+          notes = c("Source: Described in the previous section. The table depicts an overview on certain summary statistics, namely the number of observations, mean, median and standard deviation of the main variables contained in the collected dataset. Including the logarithmically transformed values of some variables to ensure that they are approximately normally distributed.") ,
+          summary = TRUE,
+          summary.stat = c("n", "mean", "median", "sd"),
+          out = "descriptivestable1.doc")
+
+############Scatterplots#######################
+
+
+fsplot1 <- ggplot(panell1, aes(x = diff_totalPopulation, y = lninvestgdp) ) +
+  geom_point() 
+fsplot1 + labs( x = "Annual Difference in Total Population", y = "Log RE Investment Ratio")
+
+fsplot2 <- ggplot(panell1, aes(x = var_rain_t_1, y = lninvestgdp) ) +
+  geom_point() 
+fsplot2 + labs( x = "Variance of Annual Rainfall in t-1", y = "Log RE Investment Ratio")
+
+fsplot3 <- ggplot(panell1, aes(x = landlocked, y = lninvestgdp) ) +
+  geom_point()
+fsplot3 + labs( x = "Landlocked Status", y = "Log RE Investment Ratio")
+
+fsplot4 <- ggplot(panell1, aes(x = ln_rain_t_1, y = lninvestgdp) ) +
+  geom_point()
+fsplot4 + labs( x = "Log of Average Annual Rainfall in t-1", y = "Log RE Investment Ratio")
+
+fsplot5 <- ggplot(panell1, aes(x = var_rain_t_1, y = lngdp) ) +
+  geom_point() 
+fsplot5 + labs( x = "Variance of Rainfall in t-1", y = "Log of GDP per Capita")
+
+fsplot6 <- ggplot(panell1, aes(x = landlocked, y = lngdp) ) +
+  geom_point()
+fsplot6 + labs( x = "Landlocked Status", y = "Log of GDP per Capita")
+
+fsplot7 <- ggplot(panell1, aes(x = ln_rain_t_1, y = lngdp) ) +
+  geom_point()
+fsplot7 + labs( x = "Log of Average Annual Rainfall in t-1", y = "Log of GDP per Capita")
+
+fsplot8 <- ggplot(panell1, aes(x = diff_totalPopulation, y = lngdp) ) +
+  geom_point()
+fsplot8 + labs( x = "Annual Difference in Total Population", y = "Log of GDP per Capita")
+
+gdpplot1 <- ggplot(panell1, aes(x = lngdp, y = rural_employment) ) +
+  geom_point()
+gdpplot1 + labs(x = "Log GDP per Capita", y = "Rural Employment Rate")
+
+gdpplot2 <- ggplot(panell1, aes(x = gdp_capita_growth, y = rural_employment) ) +
+  geom_point()
+gdpplot2 + labs(x = "GDP per Capita Growth", y = "Rural Employment Rate")
+
+gdpplot3 <- ggplot(panellg1, aes(x = gdp_capita_growth, y = rural_employment_growth) ) +
+  geom_point() +
+  labs(caption = "Source: dataset described above.
+    The figure depicts the relationship between rural employment growth rates (y-axis) and GDP 
+    growth per capita growth rates (x-axis) in a scatterplot. The employment growth rates from
+    the time lagged sample with a total of 161 observations for the years 2010-2018 remaining.") +
+  theme(plot.caption.position = "plot",
+        plot.caption = element_text(family = "Times", hjust = 0, size = 9))
+gdpplot3 + labs(x = "GDP per Capita Growth" , y = "Rural Employment Growth")
+
+
+
+tsplot1 <- ggplot(panell1, aes(x = lninvestgdp, y = rural_employment) ) +
+  geom_point() +
+  labs(caption = "Source: dataset described above.
+    The figure displays the relationship between rural employment rates (y-axis) and the log RE
+    investment ratio (x-axis) in a scatterplot. The dots represent the observations for all 19 
+    sample countries (see Table 1) in the years 2009 to 2018.") +
+  theme(plot.caption.position = "plot",
+        plot.caption = element_text(family = "Times", hjust = 0, size = 9)) +
+  ylim(0,1)
+tsplot1 + labs (x = "Log RE Investment Ratio", y = "Rural Employment Rate")
+
+
+
+tsplot2 <- ggplot(panell1, aes(x = ruleoflaw, y = rural_employment) ) +
+  geom_point() +
+  labs(caption = "Source: dataset described above.
+    The figure displays the relationship between rural employment rates (y-axis) and the rule of law 
+    index values (x-axis) in a scatterplot. The dots represent the observations for all 19 sample
+    countries (see Table 1) in the years 2009 to 2018. The full rule of law index range (-2.5 to 2.5)
+    is not covered on the x-axis since there is no observation above 0.5 in the sample.") +
+  theme(plot.caption.position = "plot",
+        plot.caption = element_text(family = "Times", hjust = 0, size = 9)) +
+  ylim(0,1) +
+  xlim(-2,1)
+tsplot2 + labs( x = "Index Value for Rule of Law", y = "Rural Employment Rate")
+
+tsplot3 <- ggplot(panell1, aes(x = ln_femaleemploy, y = rural_employment) ) +
+  geom_point() +
+  labs(caption = "Source: dataset described above.
+    The figure displays the relationship between rural employment rates (y-axis) and the log share of 
+    females in the rural labor force (x-axis) in a scatterplot. The dots represent the observations
+    for all 19 sample countries (see Table 1) in the years 2009 to 2018.") +
+  theme(plot.caption.position = "plot",
+        plot.caption = element_text(family = "Times", hjust = 0, size = 9)) +
+  ylim(0,1)
+tsplot3 + labs(x = "Log Share of Females in Rural Labor Force", y = "Rural Employment Rate")
+
+
+instplot1 <- ggplot(panell1, aes(x = ruleoflaw, y = ln_volatility) ) +
+  geom_point() +
+  labs(caption = "Source: dataset described above.
+    The figure displays the relationship between the log of GDP growth volatility (y-axis) and the
+    rule of law index values (x-axis) in a scatterplot. The dots represent the observations for all 
+    19 sample countries (see Table 1) in the years 2009 to 2018. The full rule of law index range
+    (-2.5 to 2.5) is not covered on the x-axis since there is no observation above 0.5 in the sample.") +
+  theme(plot.caption.position = "plot",
+        plot.caption = element_text(family = "Times", hjust = 0, size = 9)) +
+  xlim(-2,1)
+instplot1 + labs( x = "Index Value for Rule of Law", y = "GDP volatility")
+
+instplot2 <- ggplot(panell1, aes(x = ruleoflaw, y = lninvestgdp) ) +
+  geom_point() +
+  labs(caption = "Source: dataset described above.
+    The figure displays the relationship between the log of RE investment ratio (y-axis) and the
+    rule of law index values (x-axis) in a scatterplot. The dots represent the observations for all 
+    19 sample countries (see Table 1) in the years 2009 to 2018. The full rule of law index range
+    (-2.5 to 2.5) is not covered on the x-axis since there is no observation above 0.5 in the sample.") +
+  theme(plot.caption.position = "plot",
+        plot.caption = element_text(family = "Times", hjust = 0, size = 9)) +
+  xlim(-2,1)
+instplot2 + labs( x = "Index Value for Rule of Law", y = "Log RE Investment Ratio")
+
+
+
+#############Regressions#################
+
+ols1 <- lm(rural_employment ~ lngdp + gdp_capita_growth + ln_volatility + share_exports + inflation + ln_femaleemploy  + ruleoflaw +  lninvestgdp
+           + region + year.f
+           , data = panell1)
+summary(ols1)
+summols1 <- summary(ols1)
+seols1 <- vcovHC(ols1, type = "HC1")
+
+olscountryandtimefe1 <- plm(rural_employment ~ lngdp + gdp_capita_growth + ln_volatility + share_exports + inflation + ln_femaleemploy + ruleoflaw + lninvestgdp
+                            , data = panell1,
+                            index = c("country", "year"),
+                            model = "within",
+                            effect = "twoways")
+summary(olscountryandtimefe1, vcov = vcovHC, type = "HC1")
+seolsfe1 <- vcovHC(olscountryandtimefe1, type = "HC1")
+
+tsls1 <- ivreg(rural_employment ~ lngdp + gdp_capita_growth + ln_volatility + share_exports + inflation + ln_femaleemploy + ruleoflaw + lninvestgdp + region + year.f 
+               | var_rain_t_1 + ln_rain_t_1 + diff_totalPopulation + landlocked 
+               + ln_gdp + gdp_capita_growth + ln_volatility + share_exports + inflation + ruleoflaw + ln_femaleemploy  + year.f  + region 
+               , data = panell1)
+summ1 <- summary(tsls1, vcov = vcovHC, df = Inf, diagnostics = TRUE)
+setsls1 <- vcovHC(tsls1, type = "HC1")
+
+tslscountrytimefe1 <- plm(rural_employment ~ lngdp + gdp_capita_growth +  ln_volatility + share_exports + ln_femaleemploy + inflation + ruleoflaw + lninvestgdp
+                          | diff_totalPopulation + var_rain_t_1 + ln_rain_t_1 + landlocked 
+                          + lngdp + gdp_capita_growth + ln_volatility + share_exports + ln_femaleemploy + inflation + ruleoflaw
+                          , data = panell1,
+                          index = c("country", "year"),
+                          model = "within",
+                          effect = "twoways")
+summctfe1 <- summary(tslscountrytimefe1, vcov = vcovHC, df = Inf, diagnostics = TRUE)
+setslsfe1 <- vcovHC(tslscountrytimefe1, type = "HC1")
+
+tsls2 <- ivreg(rural_employment ~ lngdp + gdp_capita_growth + ln_volatility + share_exports + inflation + ln_femaleemploy + ruleoflaw  + lninvestgdp + region + year.f
+               | diff_totalPopulation + var_rain_t_1  + ln_rain_t_1 + landlocked
+               + gdp_capita_growth + ln_volatility + share_exports + inflation + ln_femaleemploy + ruleoflaw + region + year.f
+               , data = panell1)
+summ2 <- summary(tsls2, vcov = vcovHC, df = Inf, diagnostics = TRUE)
+setsls2 <- vcovHC(tsls2, type = "HC1")
+
+tslscountrytimefe2 <- plm(rural_employment ~ lngdp + gdp_capita_growth + ln_volatility + share_exports + inflation + ln_femaleemploy + ruleoflaw + lninvestgdp
+                          | diff_totalPopulation + var_rain_t_1 + ln_rain_t_1 + landlocked +
+                            gdp_capita_growth + ln_volatility + share_exports + inflation + ln_femaleemploy + ruleoflaw 
+                          , data = panell1,
+                          index = c("country", "year"),
+                          model = "within",
+                          effect = "twoways")
+summctfe2 <- summary(tslscountrytimefe2, vcov = vcovHC, df = Inf, diagnostics = TRUE)
+setslsfe2 <- vcovHC(tslscountrytimefe2, type = "HC1")
+
+
+ols3 <- lm(rural_employment ~ lngdp + gdp_capita_growth + ln_volatility + share_exports + inflation + ln_femaleemploy + ruleoflaw + lninvestgdp + investxruleoflaw + region + year.f
+           , data = panell1)
+summary(ols3)
+seols3 <- vcovHC(ols3, type = "HC1")
+
+ols3countrytimefe <- plm(rural_employment ~ lngdp + gdp_capita_growth + ln_volatility + share_exports + inflation + ln_femaleemploy + ruleoflaw + lninvestgdp + investxruleoflaw 
+                         , data = panell1,
+                         index = c("country", "year"),
+                         model = "within",
+                         effect = "twoways")
+summolsfe3 <- summary(ols3countrytimefe)
+seolsfe3 <- vcovHC(ols3countrytimefe, type = "HC1")
+
+tsls3 <- ivreg(rural_employment ~ lngdp + gdp_capita_growth + ln_volatility + share_exports + inflation + ln_femaleemploy + ruleoflaw + lninvestgdp + investxruleoflaw + region + year.f
+               | diff_totalPopulation + var_rain_t_1  + ln_rain_t_1 + landlocked +
+                 gdp_capita_growth + ln_volatility + share_exports + inflation + ln_femaleemploy + ruleoflaw + region + year.f
+               , data = panell1)
+summ3 <- summary(tsls3, vcov = vcovHC, df = Inf, diagnostics = TRUE)
+setsls3 <- vcovHC(tsls3, type = "HC1")
+
+
+tslscountrytimefe3 <- plm(rural_employment ~ lngdp + gdp_capita_growth + ln_volatility + share_exports + inflation + ln_femaleemploy + ruleoflaw + lninvestgdp + investxruleoflaw
+                          | diff_totalPopulation + var_rain_t_1 + ln_rain_t_1 + landlocked +
+                            gdp_capita_growth + ln_volatility + share_exports + inflation + ln_femaleemploy + ruleoflaw 
+                          , data = panell1,
+                          index = c("country", "year"),
+                          model = "within",
+                          effect = "twoways")
+summtslsfe3 <- summary(tslscountrytimefe3)
+setslsfe3 <- vcovHC(tslscountrytimefe3, type = "HC1")
+
+
+tsls3.1 <- ivreg(rural_employment ~ lngdp + gdp_capita_growth + ln_volatility + share_exports + inflation + ln_femaleemploy + ruleoflaw + lninvestgdp + investxruleoflaw + Morocco + Egypt + Turkey + year.f
+                 | diff_totalPopulation + var_rain_t_1  + ln_rain_t_1 + landlocked +
+                   gdp_capita_growth + ln_volatility + share_exports + inflation + ln_femaleemploy + ruleoflaw + Morocco + Turkey + Egypt + year.f
+                 , data = panell1)
+summ3.1 <- summary(tsls3.1, vcov = vcovHC, df = Inf, diagnostics = TRUE)
+setsls3.1 <- vcovHC(tsls3.1, type = "HC1")
+
+tsls4 <- ivreg(rural_employment ~ lngdp + gdp_capita_growth + ln_volatility + share_exports + inflation + ln_femaleemploy + ruleoflaw + lninvestgdp + investxmorocco + region  + year.f 
+               | var_rain_t_1 + ln_rain_t_1 + diff_totalPopulation + landlocked
+               + gdp_capita_growth + ln_volatility + share_exports + inflation + ruleoflaw + ln_femaleemploy + region + year.f 
+               , data = panell1)
+summ4 <- summary(tsls4, vcov = vcovHC, df = Inf, diagnostics = TRUE)
+setsls4 <- vcovHC(tsls4, type = "HC1")
+
+tsls5 <- ivreg(rural_employment ~ lngdp + gdp_capita_growth + ln_volatility + share_exports + inflation + ln_femaleemploy + ruleoflaw + lninvestgdp + Morocco + Turkey + Egypt + year.f 
+               | var_rain_t_1 + ln_rain_t_1 + diff_totalPopulation + landlocked 
+               + gdp_capita_growth + ln_volatility + share_exports + inflation + ruleoflaw + ln_femaleemploy  + year.f + Morocco + Turkey + Egypt
+               , data = panell1)
+summ5 <- summary(tsls5, vcov = vcovHC, df = Inf, diagnostics = TRUE)
+setsls5 <- vcovHC(tsls5, type = "HC1")
+
+###########Regression Outputs###################
+
+stargazer(ols1, olscountryandtimefe1, tsls1, tslscountrytimefe1,
+          header = FALSE,
+          type = "html",
+          title = "Baseline Regressions Renewable Energy Investment and Rural Employment",
+          dep.var.caption = "Dependent Variable: Rural Employment Rate",
+          se = list(NULL, c(seols1, seolsfe1, setsls1, setslsfe1)),
+          dep.var.labels.include = FALSE,
+          digits = 5,
+          notes.align = "c",
+          notes.append = TRUE,
+          notes = c("Source: Data described in section 5.1. and own calculations. Baseline regression models that serve as reference to the modelling procedure described in section 5.3. The first two columns display an OLS model with and without fixed effects, in the columns three and four the logarithm of the ratio of renewable energy funds received relative to the country's GDP per capita (Log RE Investment Ratio) is treated as endogenous variable."),
+          column.labels = c("OLS", "OLS", "TSLS", "TSLS"),
+          add.lines = list(c(rownames(summ1$diagnostics)[1],
+                             "-",
+                             "-",
+                             round(summ1$diagnostics[1, "p-value"],5),
+                             "-"),
+                           c(rownames(summ1$diagnostics)[2],
+                             "-",
+                             "-",
+                             round(summ1$diagnostics[2, "p-value"],5),
+                             "-"),
+                           c("Country-and Time-Fixed Effects",
+                             "no",
+                             "yes",
+                             "no",
+                             "yes"),
+                           c("Year Dummies",
+                             "yes",
+                             "no",
+                             "yes",
+                             "no")),
+          out = "regsinvestendogenous1.doc")
+
+stargazer(tsls2, tslscountrytimefe2, tsls5, tsls4,
+          header = FALSE,
+          type = "html",
+          title = "Renewable Energy Investment and Rural Employment Main Results",
+          dep.var.caption = "Dependent Variable: Rural Employment Rate",
+          se = list(NULL, c(setsls2, setslsfe2, setsls5, setsls4)),
+          dep.var.labels.include = FALSE,
+          digits = 5,
+          notes.align = "c",
+          notes.append = TRUE,
+          notes = c("Source: Data described in section 5.1. and own calculations. Results of the main regression models using the procedure described in section 5.3. The Log RE Investment Ratio and GDP per captia levels are treated as endogenous variables. Additionally, an interaction between the Log RE Investment Ratio and a country dummy is introduced."),
+          column.labels = c("TSLS", "TSLS", "TSLS", "TSLS"),
+          add.lines = list(c(rownames(summ2$diagnostics)[1],
+                             round(summ2$diagnostics[1, "p-value"],5),
+                             "-",
+                             round(summ5$diagnostics[1,"p-value"],5),
+                             "-"),
+                           c(rownames(summ2$diagnostics)[2],
+                             round(summ2$diagnostics[2, "p-value"],5),
+                             "-",
+                             round(summ5$diagnostics[2, "p-value"],5),
+                             "-"),
+                           c(rownames(summ4$diagnostics)[3],
+                             "-",
+                             "-",
+                             "-",
+                             "-",
+                             round(summ4$diagnostics[3, "p-value"],5)),
+                           c(rownames(summ2$diagnostics)[4],
+                             round(summ2$diagnostics[4, "p-value"],5),
+                             "-",
+                             round(summ5$diagnostics[4, "p-value"],5),
+                             round(summ4$diagnostics[4, "p-value"],5)),
+                           c("Year Dummies",
+                             "yes",
+                             "no",
+                             "yes",
+                             "yes"),
+                           c("Country and Time Fixed Effects",
+                             "no",
+                             "yes",
+                             "no",
+                             "no")),
+          out = "regsinvestandgdpendogenous1.doc")
+
+stargazer(ols3, ols3countrytimefe, tsls3, tsls3.1, tslscountrytimefe3,
+          header = FALSE,
+          type = "html",
+          title = "Renewable Energy Investment, Rural Employment and Institutions",
+          dep.var.caption = "Dependent Variable: Rural Employment Rate",
+          se = list(NULL, c(seols3 ,seolsfe3, setsls3, setsls3.1, setslsfe3)),
+          dep.var.labels.include = FALSE,
+          digits = 4,
+          notes.align = "c",
+          notes.append = TRUE,
+          notes = c("Source: Data described in section 5.1. and own calculations. Results of regression models using an interaction term between the log RE investment ratio and the rule of law index. OLS models with and without fixed effects are compared to TSLS models with different dummy variables and fixed effects."),
+          column.labels = c("OLS", "OLS", "TSLS", "TSLS", "TSLS"),
+          add.lines = list(c(rownames(summ3$diagnostics)[1],
+                             "-",
+                             "-",
+                             round(summ3$diagnostics[1,"p-value"],5),
+                             round(summ3.1$diagnostics[1,"p-value"],5),
+                             "-"),
+                           c(rownames(summ3$diagnostics)[2],
+                             "-",
+                             "-",
+                             round(summ3$diagnostics[2, "p-value"],5),
+                             round(summ3.1$diagnostics[2, "p-value"],5),
+                             "-"),
+                           c(rownames(summ3$diagnostics)[3],
+                             "-",
+                             "-",
+                             round(summ3$diagnostics[3, "p-value"],5),
+                             round(summ3.1$diagnostics[3, "p-value"],5),
+                             "-"),
+                           c(rownames(summ3$diagnostics)[4],
+                             "-",
+                             "-",
+                             round(summ3$diagnostics[4, "p-value"],5),
+                             round(summ3.1$diagnostics[4, "p-value"],5),
+                             "-"),
+                           c(rownames("Year Dummies"),
+                             "yes",
+                             "no",
+                             "yes",
+                             "yes",
+                             "no"),
+                           c(rownames("Country- and Time-Fixed Effects"),
+                             "no",
+                             "yes",
+                             "no",
+                             "no",
+                             "yes")),
+          out = "regsinvestruleinteract1.doc")
+
+
+
